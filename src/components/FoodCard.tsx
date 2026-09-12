@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MenuItem } from '@/types';
+import { MenuItem } from '../types';
 import { formatKRW } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
