@@ -10,6 +10,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
+      <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </head>
       <body className="bg-gray-100">
         <CartProvider>{children}</CartProvider>
       </body>
