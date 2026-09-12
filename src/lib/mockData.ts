@@ -1,9 +1,17 @@
-interface MenuItem {
+export type Category = 
+  | 'makanan_utama' 
+  | 'minuman' 
+  | 'dessert' 
+  | 'paket_promo' 
+  | 'bahan_mentah' 
+  | 'jastip_logistik';
+
+export interface MenuItem {
   id: string;
   name: { id: string; en: string };
   description: { id: string; en: string };
   price: number;
-  category: string;
+  category: Category;
   imageUrl: string;
   stock: number;
   isAvailable: boolean;
