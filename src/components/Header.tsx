@@ -16,11 +16,10 @@ export default function Header({ onOpenCart }: { onOpenCart: () => void }) {
           </div>
           <div>
             <h1 className="font-bold text-gray-900 text-base leading-tight">Aneka Rasa</h1>
-            <span className="text-xs text-gray-500 hidden sm:inline-block">Restoran & Jastip Logistics Korea-Indo</span>
+            <span className="text-xs text-gray-500 hidden sm:inline-block">Restoran & Toko Bahan Makanan</span>
           </div>
         </div>
         
-        {/* Tombol Keranjang (Aktif di Mobile, Buka Sidebar di Laptop) */}
         <button 
           onClick={onOpenCart} 
           className="relative p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition flex items-center gap-2"
