@@ -1,10 +1,4 @@
-export type Category = 
-  | 'makanan_utama' 
-  | 'minuman' 
-  | 'dessert' 
-  | 'paket_promo' 
-  | 'bahan_mentah' 
-  | 'jastip_logistik';
+export type Category = 'makanan_matang' | 'bahan_mentah';
 
 export interface MenuItem {
   id: string;
@@ -22,17 +16,27 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm1',
     name: { id: 'Bulgogi Beef Bowl', en: 'Bulgogi Beef Bowl' },
-    description: { id: 'Daging sapi iris marinate khas Aneka Rasa', en: 'Marinated sliced beef with rice' },
+    description: { id: 'Nasi dengan daging sapi iris marinasi khas Aneka Rasa (Siap Makan)', en: 'Marinated sliced beef with rice' },
     price: 12000,
-    category: 'makanan_utama',
+    category: 'makanan_matang',
     imageUrl: 'https://images.unsplash.com/photo-1553163147-622ab57be1c7?auto=format&fit=crop&w=800&q=80',
     stock: 25,
     isAvailable: true
   },
   {
     id: 'm2',
+    name: { id: 'Nasi Goreng Spesial', en: 'Special Fried Rice' },
+    description: { id: 'Nasi goreng khas Nusantara dengan telur dan ayam suwir', en: 'Indonesian fried rice with egg and chicken' },
+    price: 10000,
+    category: 'makanan_matang',
+    imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80',
+    stock: 20,
+    isAvailable: true
+  },
+  {
+    id: 'm3',
     name: { id: 'Bumbu Rendang Instant (1kg)', en: 'Instant Rendang Paste (1kg)' },
-    description: { id: 'Bumbu mentah siap pakai resep Nusantara', en: 'Ready to cook authentic Rendang paste' },
+    description: { id: 'Bumbu mentah siap pakai resep otentik Nusantara', en: 'Ready to cook authentic Rendang paste' },
     price: 15000,
     category: 'bahan_mentah',
     imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80',
@@ -41,14 +45,14 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
     unit: 'pack'
   },
   {
-    id: 'm3',
-    name: { id: 'Jastip Logistics Indo-Korea', en: 'Logistic Shipping Service' },
-    description: { id: 'Layanan titip kirim barang/paket 3-5 hari', en: 'Express shipping service for packages' },
-    price: 10000,
-    category: 'jastip_logistik',
-    imageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
-    stock: 99,
+    id: 'm4',
+    name: { id: 'Cabai Rawit Segar (500g)', en: 'Fresh Bird Eye Chili (500g)' },
+    description: { id: 'Bahan masakan segar untuk bumbu olahan', en: 'Fresh raw bird eye chili' },
+    price: 8000,
+    category: 'bahan_mentah',
+    imageUrl: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=800&q=80',
+    stock: 15,
     isAvailable: true,
-    unit: 'kg'
+    unit: 'pack'
   }
 ];
