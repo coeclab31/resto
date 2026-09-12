@@ -8,6 +8,26 @@ import { useCart } from '@/context/CartContext';
 import { formatKRW } from '@/lib/utils';
 import { ShoppingBag, Trash2, X } from 'lucide-react';
 
+import { createOrder } from '@/lib/firebaseServices';
+const handleCheckout = async () => {
+  if (cart.length === 0) return;
+
+  const res = await createOrder({
+    customerName: 'Pelanggan Web',
+    phone: '010-XXXX-XXXX',
+    address: 'Pelayanan Restoran Direct',
+    items: cart,
+    totalAmount: totalAmount,
+    serviceType: 'resto',
+    status: 'pending'
+  });
+
+  if (res.success) {
+    alert('Pesanan berhasil dibuat & tersimpan di Firebase Backend!');
+    window.location.reload();
+  }
+};
+
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isCartOpen, setIsCartOpen] = useState(false);
