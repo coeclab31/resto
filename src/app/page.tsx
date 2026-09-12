@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import FoodCard from '@/components/FoodCard';
-import { INITIAL_MENU_ITEMS } from '@/lib/mockData';
+import AdminProductForm from '@/components/AdminProductForm';
+import { INITIAL_MENU_ITEMS, MenuItem } from '@/lib/mockData';
 import { useCart } from '@/context/CartContext';
 import { formatKRW } from '@/lib/utils';
 import { ShoppingBag, X } from 'lucide-react';
 
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [items, setItems] = useState<MenuItem[]>(INITIAL_MENU_ITEMS);
   const [isCartOpen, setIsCartOpen] = useState(false);
   
   const { cart, updateQuantity, totalAmount, totalItems } = useCart();
@@ -18,11 +20,17 @@ export default function HomePage() {
     { id: 'all', label: 'Semua Menu' },
     { id: 'makanan_matang', label: '🍱 Makanan Matang' },
     { id: 'bahan_mentah', label: '🥩 Bahan & Bumbu Mentah' },
+    { id: 'admin_add', label: '➕ Tambah Jualan' },
   ];
 
   const filteredItems = selectedCategory === 'all'
-    ? INITIAL_MENU_ITEMS
-    : INITIAL_MENU_ITEMS.filter(item => item.category === selectedCategory);
+    ? items
+    : items.filter(item => item.category === selectedCategory);
+
+  const handleAddNewItem = (newItem: MenuItem) => {
+    setItems((prevItems) => [newItem, ...prevItems]);
+    setSelectedCategory(newItem.category);
+  };
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
@@ -46,7 +54,7 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto w-full px-4 sm:px-8 py-6 flex-1 flex flex-col lg:flex-row gap-8">
         
-        {/* Kolom Kiri: Filter Kategori & Grid Produk */}
+        {/* Kolom Kiri: Filter & Konten Utama */}
         <div className="flex-1">
           {/* Filter Bar */}
           <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-none">
@@ -65,15 +73,21 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Grid Produk Responsive */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {filteredItems.map((item) => (
-              <FoodCard key={item.id} item={item} />
-            ))}
-          </div>
+          {/* Render Form Admin ATAU Grid Produk */}
+          {selectedCategory === 'admin_add' ? (
+            <div className="max-w-xl mx-auto">
+              <AdminProductForm onAddItem={handleAddNewItem} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {filteredItems.map((item) => (
+                <FoodCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Sidebar Keranjang Belanja (Tampil di Laptop/Desktop) */}
+        {/* Sidebar Keranjang Belanja (Desktop) */}
         <div className="hidden lg:block w-80 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm h-fit sticky top-20">
           <h2 className="font-bold text-gray-900 text-lg flex items-center gap-2 mb-4 border-b pb-3">
             <ShoppingBag className="w-5 h-5 text-red-600" /> Keranjang Belanja ({totalItems})
