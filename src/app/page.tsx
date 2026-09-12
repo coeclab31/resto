@@ -3,52 +3,61 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import FoodCard from '@/components/FoodCard';
+import JastipForm from '@/components/JastipForm';
 import { INITIAL_MENU_ITEMS } from '@/lib/mockData';
 import { useCart } from '@/context/CartContext';
 import { formatKRW } from '@/lib/utils';
-import { ShoppingBag, Trash2, X } from 'lucide-react';
-
 import { createOrder } from '@/lib/firebaseServices';
-const handleCheckout = async () => {
-  if (cart.length === 0) return;
-
-  const res = await createOrder({
-    customerName: 'Pelanggan Web',
-    phone: '010-XXXX-XXXX',
-    address: 'Pelayanan Restoran Direct',
-    items: cart,
-    totalAmount: totalAmount,
-    serviceType: 'resto',
-    status: 'pending'
-  });
-
-  if (res.success) {
-    alert('Pesanan berhasil dibuat & tersimpan di Firebase Backend!');
-    window.location.reload();
-  }
-};
+import { ShoppingBag, X } from 'lucide-react';
 
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Memanggil variabel cart & totalAmount dari Context
   const { cart, updateQuantity, totalAmount, totalItems } = useCart();
 
   const categories = [
     { id: 'all', label: 'Semua Menu' },
     { id: 'makanan_utama', label: 'Makanan Utama' },
     { id: 'bahan_mentah', label: 'Bumbu & Bahan' },
-    { id: 'jastip_logistik', label: 'Jastip Logistics' },
+    { id: 'jastip_logistik', label: 'Jastip Form' },
   ];
 
   const filteredItems = selectedCategory === 'all'
     ? INITIAL_MENU_ITEMS
     : INITIAL_MENU_ITEMS.filter(item => item.category === selectedCategory);
 
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
+    setIsSubmitting(true);
+    
+    const res = await createOrder({
+      customerName: 'Pelanggan Resto',
+      phone: '010-XXXX-XXXX',
+      address: 'Layanan Restoran Direct',
+      items: cart,
+      totalAmount: totalAmount,
+      serviceType: 'resto',
+      status: 'pending'
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success) {
+      alert('Pesanan berhasil dibuat & tersimpan di Firebase Backend!');
+      window.location.reload();
+    } else {
+      alert('Gagal menyimpan pesanan ke Firebase.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header onOpenCart={() => setIsCartOpen(true)} />
 
-      {/* Hero Banner untuk Desktop & Mobile */}
+      {/* Hero Banner */}
       <div className="bg-red-600 text-white py-8 px-4 sm:px-8 text-center sm:text-left">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <div>
@@ -56,7 +65,7 @@ export default function HomePage() {
             <p className="text-red-100 text-sm sm:text-base mt-1">Cita Rasa Otentik Nusantara & Layanan Kirim Paket Korea-Indo</p>
           </div>
           <span className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm font-medium">
-            🇰🇷 South Korea Service Hub
+            🇰🇷 South Korea Hub
           </span>
         </div>
       </div>
@@ -64,9 +73,8 @@ export default function HomePage() {
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto w-full px-4 sm:px-8 py-6 flex-1 flex flex-col lg:flex-row gap-8">
         
-        {/* Kolom Kiri: Filter & Grid Produk */}
+        {/* Kolom Kiri: Filter & Grid / Form Jastip */}
         <div className="flex-1">
-          {/* Filter Bar Horizontal */}
           <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-none">
             {categories.map((cat) => (
               <button
@@ -83,15 +91,20 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Grid Produk: 2 Kolom di Mobile, 3 di Tablet, 4 di Desktop Large */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {filteredItems.map((item) => (
-              <FoodCard key={item.id} item={item} />
-            ))}
-          </div>
+          {selectedCategory === 'jastip_logistik' ? (
+            <div className="max-w-xl mx-auto">
+              <JastipForm />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {filteredItems.map((item) => (
+                <FoodCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Kolom Kanan: Sidebar Keranjang Belanja (Tampil di Desktop) */}
+        {/* Kolom Kanan: Sidebar Keranjang Belanja (Desktop) */}
         <div className="hidden lg:block w-80 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm h-fit sticky top-20">
           <h2 className="font-bold text-gray-900 text-lg flex items-center gap-2 mb-4 border-b pb-3">
             <ShoppingBag className="w-5 h-5 text-red-600" /> Keranjang Belanja ({totalItems})
@@ -120,15 +133,19 @@ export default function HomePage() {
                 <span>Total:</span>
                 <span className="text-red-600">{formatKRW(totalAmount)}</span>
               </div>
-              <button className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl shadow transition">
-                Checkout Sekarang
+              <button 
+                onClick={handleCheckout} 
+                disabled={isSubmitting}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl shadow transition disabled:opacity-50"
+              >
+                {isSubmitting ? 'Memproses...' : 'Checkout (Firebase)'}
               </button>
             </div>
           )}
         </div>
       </main>
 
-      {/* Modal Slide-over Keranjang Belanja (Mobile Only) */}
+      {/* Modal Keranjang Belanja (Mobile) */}
       {isCartOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex justify-end bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-xs bg-white h-full p-5 flex flex-col justify-between shadow-2xl">
@@ -167,7 +184,13 @@ export default function HomePage() {
                   <span>Total:</span>
                   <span className="text-red-600">{formatKRW(totalAmount)}</span>
                 </div>
-                <button className="w-full bg-red-600 text-white font-bold py-2.5 rounded-xl">Checkout</button>
+                <button 
+                  onClick={handleCheckout} 
+                  disabled={isSubmitting}
+                  className="w-full bg-red-600 text-white font-bold py-2.5 rounded-xl disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Memproses...' : 'Checkout (Firebase)'}
+                </button>
               </div>
             )}
           </div>
