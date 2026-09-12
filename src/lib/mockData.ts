@@ -1,4 +1,14 @@
-import { MenuItem } from '@/types';
+interface MenuItem {
+  id: string;
+  name: { id: string; en: string };
+  description: { id: string; en: string };
+  price: number;
+  category: string;
+  imageUrl: string;
+  stock: number;
+  isAvailable: boolean;
+  unit?: string;
+}
 
 export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
