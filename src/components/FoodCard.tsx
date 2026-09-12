@@ -1,10 +1,29 @@
 'use client';
 
 import React from 'react';
-import { MenuItem } from '../types';
 import { formatKRW } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+
+export type Category = 
+  | 'makanan_utama' 
+  | 'minuman' 
+  | 'dessert' 
+  | 'paket_promo' 
+  | 'bahan_mentah' 
+  | 'jastip_logistik';
+
+export interface MenuItem {
+  id: string;
+  name: { id: string; en: string };
+  description: { id: string; en: string };
+  price: number;
+  category: Category;
+  imageUrl: string;
+  stock: number;
+  isAvailable: boolean;
+  unit?: string;
+}
 
 export default function FoodCard({ item }: { item: MenuItem }) {
   const { addToCart } = useCart();
